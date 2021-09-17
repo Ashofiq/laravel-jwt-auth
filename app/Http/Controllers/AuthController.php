@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Helper\RespondsWithHttpStatus;
 use Auth;
 
 
 class AuthController extends Controller{
     
+    use RespondsWithHttpStatus;
     /**
      * Create a new AuthController instance.
      *
@@ -30,10 +32,11 @@ class AuthController extends Controller{
         $credentials = $request->only('email', 'password');
 
         if ($token = $this->guard()->attempt($credentials)) {
-            return $this->respondWithToken($token);
+            $data = $this->respondWithToken($token);
+            return $this->success('success', $data);
         }
 
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return $this->success('Unauthorized', 403);// response()->json(['error' => 'Unauthorized'], 401);
     }
 
     /**
